@@ -42,7 +42,6 @@ async def start_comment(update, context):
 
 async def message_handler_function(update, context):
 
-    print(update.message.text)
     text_message = update.message.text
     result = toxicity_check_model.predict(text_message)
     if result.get('toxicity') > 0.4:
@@ -61,9 +60,12 @@ async def message_handler_function(update, context):
         # Format the message as a spoiler using Markdown
         formatted_message = f"{user}\n{non_toxic}\n{toxic_version}"
 
-        # Send the message with Markdown parsing mode
-        await context.bot.send_message(chat_id=chat_id, text=formatted_message, parse_mode=ParseMode.MARKDOWN_V2)
-
+        try:
+            # Send the message with Markdown parsing mode
+            await context.bot.send_message(chat_id=chat_id, text=formatted_message, parse_mode=ParseMode.MARKDOWN_V2)
+        except Exception as e:
+            await context.bot.send_message(chat_id=chat_id, text="Could not format to string", parse_mode=ParseMode.MARKDOWN_V2)
+            print(e)
 
 async def error(update, context):
     print(f'Update {update} caused error {context.error}')
