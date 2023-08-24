@@ -64,7 +64,9 @@ async def message_handler_function(update, context):
             # Send the message with Markdown parsing mode
             await context.bot.send_message(chat_id=chat_id, text=formatted_message, parse_mode=ParseMode.MARKDOWN_V2)
         except Exception as e:
-            await context.bot.send_message(chat_id=chat_id, text="Could not format to string", parse_mode=ParseMode.MARKDOWN_V2)
+            formatted_message = f"{user}\n{toxic_version}"
+            await context.bot.send_message(chat_id=chat_id, text=formatted_message, parse_mode=ParseMode.MARKDOWN_V2)
+            print("Could not format string")
             print(e)
 
 async def error(update, context):
