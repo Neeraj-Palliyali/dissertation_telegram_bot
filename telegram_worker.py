@@ -1,5 +1,6 @@
 import keys
 from detoxify import Detoxify
+from db_model import db_conn
 from telegram.constants import ParseMode
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 from telegram.ext import (Application, CommandHandler,
@@ -32,9 +33,7 @@ class Detox:
             outputs[0], max_length=400, skip_special_tokens=True)
         converted_text = converted_text.replace("non-toxic ", "")
         converted_text = converted_text.replace(".", " \.")
-
         return converted_text
-
 
 async def start_comment(update, context):
     await update.message.reply_text("Hello there!!!, Lets begin!")
@@ -48,11 +47,18 @@ async def message_handler_function(update, context):
         await context.bot.delete_message(chat_id=update.message.chat.id, message_id=update.message.message_id)
 
         chat_id = update.effective_chat.id
+        date = update.message.date
         username = update.message.from_user.username
-
         detox_version = detox_model.text_convertion(text_message)
         user = f"User {username} sent a toxic message\. "
         non_toxic = f"Detoxified version: {detox_version}\."
+
+        row = db.add_row({
+            "toxic_text": text_message,
+            "neutered_text": detox_version,
+            "sender": username,
+            "incident_date": date
+        })
 
         text_message = text_message.replace(".", " \.")
         toxic_version = f"Toxic version:  ||{text_message}||"
@@ -63,12 +69,14 @@ async def message_handler_function(update, context):
         try:
             # Send the message with Markdown parsing mode
             await context.bot.send_message(chat_id=chat_id, text=formatted_message, parse_mode=ParseMode.MARKDOWN_V2)
+            
         except Exception as e:
             formatted_message = f"{user}\n{toxic_version}"
             await context.bot.send_message(chat_id=chat_id, text=formatted_message, parse_mode=ParseMode.MARKDOWN_V2)
             print("Could not format string")
             print(e)
-
+        await row
+        
 async def error(update, context):
     print(f'Update {update} caused error {context.error}')
 
@@ -80,6 +88,8 @@ if __name__ == '__main__':
     detox_model = Detox()
 
     application = Application.builder().token(keys.token).build()
+    print("Loading DB")
+    db = db_conn()
     print("Up and running")
 
     application.add_handler(CommandHandler('start', start_comment))

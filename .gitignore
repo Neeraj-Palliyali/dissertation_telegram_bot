@@ -1,5 +1,11 @@
 .vscode/
 .vevn/
 __pycache__/
+
 models/
+.temp/
+
 keys.py
+
+train.tsv
+toxic.db
