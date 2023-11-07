@@ -5,7 +5,7 @@ __pycache__/
 models/
 .temp/
 
-key.py
+keys.py
 
 train.tsv
 toxic.db
