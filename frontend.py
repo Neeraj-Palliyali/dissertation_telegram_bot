@@ -7,6 +7,7 @@ import pandas as pd
 db = sqlite3.connect('toxic.db')
 df = pd.read_sql_query("SELECT * FROM messages", db)
 df['incident_date'] = pd.to_datetime(df['incident_date'])
+df.sort_values(by='id', ascending =False, inplace=True)
 
 st.markdown('''<style> 
             .st-emotion-cache-1y4p8pa {

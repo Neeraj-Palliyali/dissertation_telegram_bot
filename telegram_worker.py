@@ -55,7 +55,7 @@ async def message_handler_function(update, context):
 
         row = db.add_row({
             "toxic_text": text_message,
-            "neutered_text": detox_version,
+            "neutered_text": detox_version.replace(' \.','.'),
             "sender": username,
             "incident_date": date
         })

@@ -7,7 +7,7 @@ from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, Session
 class db_conn:
 
     def __init__(self) -> None:
-        self.engine = create_engine("sqlite+pysqlite:///toxic.db", echo=True)
+        self.engine = create_engine("sqlite+pysqlite:///toxic.db", echo=False)
         Base.metadata.create_all(self.engine)
 
     async def add_row(self, vals):
