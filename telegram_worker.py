@@ -71,7 +71,7 @@ async def message_handler_function(update, context):
             await context.bot.send_message(chat_id=chat_id, text=formatted_message, parse_mode=ParseMode.MARKDOWN_V2)
             
         except Exception as e:
-            formatted_message = f"{user}\n{toxic_version}"
+            formatted_message = f"{user} send toxic message: \n{toxic_version}"
             await context.bot.send_message(chat_id=chat_id, text=formatted_message, parse_mode=ParseMode.MARKDOWN_V2)
             print("Could not format string")
             print(e)
@@ -88,7 +88,7 @@ if __name__ == '__main__':
     detox_model = Detox()
 
     application = Application.builder().token(keys.token).build()
-    print("Loading DB")
+    print("Loading DB.....")
     db = db_conn()
     print("Up and running")
 
